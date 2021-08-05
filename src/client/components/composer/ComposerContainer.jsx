@@ -22,6 +22,7 @@ const mapStateToProps = (store) => {
     currentTab: store.business.currentTab,
     warningMessage: store.business.warningMessage,
     introspectionData: store.business.introspectionData,
+    webrtcData: store.business.webrtcData,
   };
 };
 
@@ -167,6 +168,7 @@ const ComposerContainer = (props) => {
           graphQL: false,
           gRPC: false,
           ws: false,
+          webrtc: true,
           network,
           testContent: '',
         });
