@@ -1,93 +1,82 @@
-/* eslint-disable camelcase */
-import * as store from '../store';
-import * as actions from '../actions/actions';
+// /* eslint-disable camelcase */
+// import * as store from '../store';
+// import * as actions from '../actions/actions';
 
-const { api } = window;
+// const { api } = window;
 
-// define roles
-const roles = {
-  pending: 'PENDING',
-  initiator: 'INITIATOR',
-  receiver: 'RECEIVER',
-};
+// // define roles
+// const roles = {
+//   pending: 'PENDING',
+//   initiator: 'INITIATOR',
+//   receiver: 'RECEIVER',
+// };
 
-// set my role
-const myRole = roles.pending;
+// // set my role
+// const myRole = roles.pending;
 
-// Server configuration
-const iceConfiguration = {};
-iceConfiguration.iceServers = [];
+// // Server configuration
+// const iceConfiguration = {};
+// iceConfiguration.iceServers = [
+//   {
+//     urls: 'turn:104.153.154.109',
+//     username: 'teamswell',
+//     credential: 'cohortla44',
+//     credentialType: 'password',
+//   },
+//   {
+//     urls: 'stun:stun1.l.google.com:19302',
+//   },
+//   {
+//     urls: 'stun:104.153.154.109',
+//   },
+// ];
 
-// turn server
-iceConfiguration.iceServers.push({
-  // new coturn STUN/TURN
-  urls: 'turn:104.153.154.109',
-  username: 'teamswell',
-  credential: 'cohortla44',
-  credentialType: 'password',
-});
+// const pcInitiator = new RTCPeerConnection(iceConfiguration);
+// const pcReceiver = new RTCPeerConnection(iceConfiguration);
 
-iceConfiguration.iceServers.push(
-  {
-    urls: 'stun:stun1.l.google.com:19302',
-  },
-  {
-    urls: 'stun:104.153.154.109',
-  }
-);
+// let pc;
 
-const webrtcController = {
-  openWebrtcConnection(reqResObj, connectionArray) {
-    console.log(`webrtcController.openWebrtcConnection`);
-    // set reqResObj for webrtc
-    reqResObj.response.messages = [];
-    reqResObj.request.messages = [];
-    reqResObj.connection = 'pending';
-    reqResObj.closeCode = 0;
-    reqResObj.timeSent = Date.now();
+// const webrtcController = {
+//   openWebrtcConnection(reqResObj, connectionArray) {
+//     console.log(`webrtcController.openWebrtcConnection`);
 
-    // create peer connections as instances of RTCPeerConnection
-    const pcInitiator = new RTCPeerConnection(iceConfiguration);
-    const pcReceiver = new RTCPeerConnection(iceConfiguration);
+//     // set reqResObj for webrtc
+//     reqResObj.response.messages = [];
+//     reqResObj.request.messages = [];
+//     reqResObj.connection = 'pending';
+//     reqResObj.closeCode = 0;
+//     reqResObj.timeSent = Date.now();
 
-    // store.default.dispatch(actions.reqResUpdate(reqResObj));
-    console.log(`connection array`, connectionArray);
-    console.log(`reqResObj`, reqResObj);
+//     reqResObj.connection = 'connected';
+//     console.log(pcInitiator);
+//   },
+//   setLocalSDP(content) {
+//     console.log('setLocalSDP');
+//     console.log('[setLocalSDP] pcInitiator config:');
+//     console.log(JSON.stringify(pcInitiator.getConfiguration()));
+//     console.log(content.webrtcData);
+//     pcInitiator
+//       .createOffer()
+//       .then((offer) => {
+//         pcInitiator.setLocalDescription(offer);
+//       })
+//       .then((a) => {
+//         console.log('[setLocalSDP] offer set successfully!');
+//         content.webrtcData.localSdp = JSON.stringify(
+//           pcInitiator.localDescription
+//         );
+//         console.log(
+//           '[setLocalSDP] webrtcData.localSdp: (stringified)\n',
+//           JSON.stringify(content.webrtcData.localSdp)
+//         );
+//         store.default.dispatch(actions.saveCurrentResponseData(content));
+//         // store.default.dispatch(actions.reqResUpdate(newReqRes));
+//       });
+//     pcInitiator.onicecandidate = (event) => console.log(event);
+//   },
+//   displayLocalSDP(event) {
+//     // console.log('new ICE candidate:\n', event.target.localDescription);
+//   },
+// };
 
-    console.log(pcInitiator);
-
-    pcInitiator.onicecandidate = (event) => displayLocalSDP(event);
-    pcReceiver.onicecandidate = (event) => displayLocalSDP(event);
-
-    // log and display Local SDP (ICE candidates)
-    function displayLocalSDP(event) {
-      console.log(`displayLocalSDP: incoming event:`);
-      console.log(event);
-
-      if (
-        event &&
-        event.target &&
-        event.target.iceGatheringState === 'complete'
-      ) {
-        console.log(
-          'done gathering candidates - got iceGatheringState complete'
-        );
-      } else if (event && event.candidate == null) {
-        console.log('done gathering candidates - got null candidate');
-      } else {
-        console.log(
-          event.target.iceGatheringState,
-          event,
-          event.target.localDescription
-        );
-        console.log('corresponding SDP for above ICE candidate in JSON:');
-        console.log(JSON.stringify(event.target.localDescription));
-        // display the newly created SDP in the Local SDP textarea on the DOM
-        const localSDP = JSON.stringify(event.target.localDescription);
-        localSdpDisplay.textContent = localSDP; // DOM element
-      }
-    }
-  },
-};
-
-export default webrtcController;
+// export default webrtcController;
