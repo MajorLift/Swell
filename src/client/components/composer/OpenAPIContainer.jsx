@@ -43,24 +43,8 @@ function OpenAPIContainer({
   setNewRequestCookies,
   newRequestCookies,
   newRequestCookies: { cookiesArr },
-  setNewRequestStreams,
-  newRequestStreams,
-  newRequestStreams: {
-    selectedService,
-    selectedRequest,
-    selectedPackage,
-    streamingType,
-    initialQuery,
-    streamsArr,
-    streamContent,
-    services,
-    protoPath,
-    protoContent,
-  },
-  setNewRequestSSE,
-  newRequestSSE: { isSSE },
+
   currentTab,
-  introspectionData,
   setComposerWarningMessage,
   setComposerDisplay,
   warningMessage,
@@ -69,104 +53,82 @@ function OpenAPIContainer({
 }) {
   const requestValidationCheck = () => {
     const validationMessage = {};
-    //Error conditions removing the need for url for now
+    //!Error conditions removing the need for url for now
 
     return validationMessage;
   };
 
   const addNewRequest = () => {
+    console.log(newRequestFields);
+
+    console.log(
+      newRequestsOpenAPI.openapiMetadata,
+      newRequestsOpenAPI.openapiReqArray
+    );
+
     const warnings = requestValidationCheck();
     if (Object.keys(warnings).length > 0) {
       setComposerWarningMessage(warnings);
       return;
     }
 
-    // saves all stream body queries to history & reqres request body
-    let streamQueries = '';
-    for (let i = 0; i < streamContent.length; i++) {
-      // queries MUST be in format, do NOT edit template literal unless necessary
-      streamQueries += `${streamContent[i]}`;
-    }
-    // define array to hold client query strings
-    const queryArrStr = streamContent;
-    const queryArr = [];
-    // scrub client query strings to remove line breaks
-    // convert strings to objects and push to array
-    for (let i = 0; i < queryArrStr.length; i += 1) {
-      let query = queryArrStr[i];
-      const regexVar = /\r?\n|\r|↵/g;
-      query = query.replace(regexVar, '');
-      queryArr.push(JSON.parse(query));
-    }
-    // grabbing streaming type to set method in reqRes.request.method
-    const grpcStream = document.getElementById('stream').innerText;
-    // create reqres obj to be passed to controller for further actions/tasks
-    const reqRes = {
-      id: uuid(),
-      created_at: new Date(),
-      protocol: '',
-      url,
-      graphQL,
-      gRPC,
-      webrtc,
-      timeSent: null,
-      timeReceived: null,
-      connection: 'uninitialized',
-      connectionType: null,
-      checkSelected: false,
-      request: {
-        method: grpcStream,
-        headers: headersArr.filter((header) => header.active && !!header.key),
-        body: streamQueries,
-        bodyType,
-        rawType,
-        network,
+    newRequestsOpenAPI.openapiMetadata.openapiReqArray.forEach((req) => {
+      const reqRes = {
+        id: uuid(),
+        created_at: new Date(),
+        host: 'https://api.twitter.com',
+        protocol: 'https://',
+        url: `https://api.twitter.com${req.endpoint}`,
+        graphQL,
+        gRPC,
+        webrtc,
+        timeSent: null,
+        timeReceived: null,
+        connection: 'uninitialized',
+        connectionType: null,
+        checkSelected: false,
+        request: {
+          method: req.method,
+          headers: headersArr.filter((header) => header.active && !!header.key),
+          body: req.body,
+          bodyType,
+          rawType,
+          network,
+          restUrl,
+          wsUrl,
+          gqlUrl,
+          testContent: testContent || '',
+          grpcUrl,
+        },
+        response: {
+          cookies: [],
+          headers: {},
+          stream: null,
+          events: [],
+        },
+        checked: false,
+        minimized: false,
+        tab: currentTab,
+      };
+
+      // add request to history
+      historyController.addHistoryToIndexedDb(reqRes);
+      reqResAdd(reqRes);
+
+      //reset for next request
+      resetComposerFields();
+
+      // GRPC REQUESTS
+      setNewRequestBody({
+        ...newRequestBody,
+        bodyType: 'GRPC',
+        rawType: '',
+      });
+      setNewRequestFields({
+        ...newRequestFields,
+        url: `https://api.twitter.com${req.endpoint}`,
         restUrl,
-        wsUrl,
-        gqlUrl,
-        testContent: testContent || '',
-        grpcUrl,
-      },
-      response: {
-        cookies: [],
-        headers: {},
-        stream: null,
-        events: [],
-      },
-      checked: false,
-      minimized: false,
-      tab: currentTab,
-      service: selectedService,
-      rpc: selectedRequest,
-      packageName: selectedPackage,
-      streamingType,
-      queryArr,
-      initialQuery,
-      streamsArr,
-      streamContent,
-      servicesObj: services,
-      protoPath,
-      protoContent,
-    };
-
-    console.log(newRequestsOpenAPI.openapiMetadata, newRequestsOpenAPI.openapiReqArray);
-    // add request to history
-    historyController.addHistoryToIndexedDb(reqRes);
-    reqResAdd(reqRes);
-
-    //reset for next request
-    resetComposerFields();
-
-    // GRPC REQUESTS
-    setNewRequestBody({
-      ...newRequestBody,
-      bodyType: 'GRPC',
-      rawType: '',
-    });
-    setNewRequestFields({
-      ...newRequestFields,
-      url: grpcUrl,
-      grpcUrl,
+      });
     });
 
     setWorkspaceActiveTab('workspace');
@@ -185,11 +147,9 @@ function OpenAPIContainer({
         <OpenAPIEntryForm
           newRequestFields={newRequestFields}
           newRequestHeaders={newRequestHeaders}
-          newRequestStreams={newRequestStreams}
           newRequestBody={newRequestBody}
           setNewRequestFields={setNewRequestFields}
           setNewRequestHeaders={setNewRequestHeaders}
-          setNewRequestStreams={setNewRequestStreams}
           setNewRequestCookies={setNewRequestCookies}
           setNewRequestBody={setNewRequestBody}
           warningMessage={warningMessage}
@@ -198,8 +158,6 @@ function OpenAPIContainer({
         <OpenAPIDocumentEntryForm
           newRequestFields={newRequestFields}
           setNewRequestFields={setNewRequestFields}
-          newRequestStreams={newRequestStreams}
-          setNewRequestStreams={setNewRequestStreams}
           newRequestHeaders={newRequestHeaders}
           setNewRequestHeaders={setNewRequestHeaders}
           setNewRequestCookies={setNewRequestCookies}
@@ -209,11 +167,9 @@ function OpenAPIContainer({
         <HeaderEntryForm
           stylesObj={HeaderEntryFormStyle}
           newRequestHeaders={newRequestHeaders}
-          newRequestStreams={newRequestStreams}
           newRequestBody={newRequestBody}
           newRequestFields={newRequestFields}
           setNewRequestHeaders={setNewRequestHeaders}
-          setNewRequestStreams={setNewRequestStreams}
         />
       </div>
       <div className="is-3rem-footer is-clickable is-margin-top-auto">

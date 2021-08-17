@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TextCodeAreaEditable from './TextCodeAreaEditable.jsx';
 
-
 const { api } = window;
 
 const OpenAPIDocumentEntryForm = (props) => {
@@ -11,7 +10,6 @@ const OpenAPIDocumentEntryForm = (props) => {
 
   console.log(props.newRequestsOpenAPI);
 
-  
   const importDocument = () => {
     // clear all stream bodies except first one upon clicking on import proto file
     console.log('importing document');
@@ -26,27 +24,21 @@ const OpenAPIDocumentEntryForm = (props) => {
     //     count: 1,
     //   });
     // }
-    
-
-    props.setNewRequestsOpenAPI({
-      ...props.newRequestsOpenAPI,
-      // this should be the un-parsed document eventually
-      // openapiContent: parsedDocument,
-      // version: parsedDocument.openapi,
-      // info: parsedDocument.info,
-      // serversGlobal: parsedDocument.servers,
-      // tags: parsedDocument.tags,
-    });
 
     //listens for imported openapi document from main process
     api.receive('openapi-info', (readDocument, parsedDocument) => {
-      console.log('received openapi-info',  parsedDocument);
+      console.log('received openapi-info', parsedDocument);
       const { openapiMetadata, openapiReqArray } = parsedDocument;
       saveChanges(true);
-       props.setNewRequestsOpenAPI({
-          openapiMetadata,
-          openapiReqArray,
-       });
+      props.setNewRequestsOpenAPI({
+        openapiMetadata,
+        openapiReqArray,
+        //   openapiContent: parsedDocument,
+        //   version: parsedDocument.openapi,
+        //   info: parsedDocument.info,
+        //   serversGlobal: parsedDocument.servers,
+        //   tags: parsedDocument.tags,
+      });
     });
     api.send('import-openapi');
   };
@@ -83,7 +75,7 @@ const OpenAPIDocumentEntryForm = (props) => {
 
   //       props.setNewRequestStreams({
   //         ...props.newRequestStreams,
-       
+
   //       });
   //     });
 
@@ -92,13 +84,6 @@ const OpenAPIDocumentEntryForm = (props) => {
   // };
 
   const saveChangesBtnText = changesSaved ? 'Changes Saved' : 'Save Changes';
-  /*
-    pseudocode for the return section
-     - first div renders the arrow button along with the title "Proto"
-     - textarea has a default value which changes when a proto file is imported or pasted in
-     - the 2 buttons allow you to import a proto file or save any changes made to the textarea in the state of the store
-     - the GRPCAutoInputForm component renders the section with the dropdown lists for services and requests
-     */
 
   return (
     <div className="mt-1">
