@@ -1,6 +1,4 @@
-// import * as YAML from 'yamljs';
-const fs = require('fs');
-const path = require('path');
+const YAML = require('yamljs');
 
 // TODO: Validation, Callbacks
 const openapiParserFunc = (input) => {
@@ -10,15 +8,10 @@ const openapiParserFunc = (input) => {
   try {
     doc = JSON.parse(input);
   } catch (SyntaxError) {
-    // doc = YAML.parse(input) as Record<string, unknown>;
+    doc = YAML.parse(input);
     console.error(SyntaxError);
   }
-  const {
-    info,
-    servers,
-    tags,
-    paths, // components
-  } = doc;
+  const { info, servers, tags, paths, components } = doc;
   info.openapi = doc.openapi;
   const serverUrls = [...servers.map((server) => server.url)];
   let id = 0;
@@ -34,9 +27,10 @@ const openapiParserFunc = (input) => {
         tags,
         parameters, // security
       } = operationObj;
+
       const request = {
         id,
-        enabled: true,
+        // enabled: true,
         reqTags: tags,
         summary,
         description,
@@ -48,8 +42,8 @@ const openapiParserFunc = (input) => {
         body: new Map(),
         headers: {},
         cookies: {},
-        params: {},
-        queries: {},
+        // params: {},
+        // queries: {},
         urls: [],
       };
       openapiReqArray.push(request);

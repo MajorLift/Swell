@@ -59,10 +59,8 @@ const mapDispatchToProps = (dispatch) => ({
   setNewRequestSSE: (requestSSEBool) => {
     dispatch(actions.setNewRequestSSE(requestSSEBool));
   },
-  setNewRequestsOpenAPI: ({ openapiMetadata, openapiReqArray }) => {
-    dispatch(
-      actions.setNewRequestsOpenAPI({ openapiMetadata, openapiReqArray })
-    );
+  setNewRequestsOpenAPI: (parsedDocument) => {
+    dispatch(actions.setNewRequestsOpenAPI(parsedDocument));
   },
   resetComposerFields: () => {
     dispatch(actions.resetComposerFields());
@@ -124,23 +122,19 @@ const ComposerContainer = (props) => {
         });
         break;
       }
-      // TODO:  adjust for OpenApi
       case 'openapi': {
         props.resetComposerFields();
         props.setNewRequestFields({
           ...props.newRequestFields,
-          protocol: 'openapi',
-          // url: props.newRequestFields.openapiUrl,
-
-          openapi: true,
-          method: 'get',
+          protocol: '',
+          url: '',
+          method: 'GET',
           graphQL: false,
           gRPC: false,
           ws: false,
-          network,
+          network: 'openapi',
           testContent: '',
         });
-
         props.setNewRequestBody({
           ...props.newRequestBody,
           bodyType: 'none',

@@ -56,9 +56,6 @@ const connectionController = {
       api.receive('update-connectionArray', (connectionArray) => {
         this.openConnectionArray.push(...connectionArray);
       });
-      // Todo: WEBRTC
-    } else if (reqResObj.webrtc) {
-      console.log(reqResObj);
     }
     // gRPC connection
     else if (reqResObj.gRPC) {
@@ -122,7 +119,7 @@ const connectionController = {
           reqResObj.connection === 'error') &&
         reqResObj.timeSent &&
         reqResObj.timeReceived &&
-        reqResObj.respcodonse.events.length > 0
+        reqResObj.response.events.length > 0
       ) {
         store.default.dispatch(actions.updateGraph(reqResObj));
       }
