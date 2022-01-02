@@ -11,6 +11,20 @@ module.exports = merge(base, {
     host: 'localhost',
     port: '8080',
     hot: true,
+    proxy: {
+      '/webhookServer': {
+        target: 'http://localhost:3000',
+        secure: false,
+      },
+      '/webhook': {
+        target: 'http://localhost:3000',
+        secure: false,
+      },
+      '/server/**': {
+        target: 'http://localhost:3000/',
+        secure: false,
+      },
+    },
     compress: true,
     onBeforeSetupMiddleware() {
       spawn('electron', ['.', 'dev'], {

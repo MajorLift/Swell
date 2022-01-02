@@ -1,5 +1,5 @@
 export type Protocol = 'http://' | 'ws://';
-export type Network = 'rest' | 'ws' | 'webrtc' | 'graphqL' | 'grpc' | 'openapi';
+export type Network = 'rest' | 'ws' | 'webRtc' | 'graphQL' | 'gRpc' | 'openApi';
 export type ConnectionStatus = 'uninitialized' | 'error' | 'open' | 'closed';
 export type Methods =
   | 'GET'

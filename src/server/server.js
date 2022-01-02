@@ -1,21 +1,20 @@
-import path from 'path';
-import express from 'express';
-import ngrok from 'ngrok';
+const path = require('path');
+const express = require('express');
+const ngrok = require('ngrok');
 
 const port = 3000;
 const app = express();
 
 //websocket stuff
-import server from 'http'.createServer(app);
-import io from 'socket.io'(server, {
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
   cors: {
-    origin: '*'
-  }
+    origin: '*',
+  },
 });
 
 // if u want to use routers, set socket io then google the rest
 // app.set('socketio', io);
-
 
 // io.on('connection', (client)=>{
 //   console.log('established websocket connection');
@@ -55,10 +54,10 @@ app.delete('/webhookServer', (req, res) => {
 app.post('/webhook', (req, res) => {
   // console.log("this is the req", req.headers);
   // console.log(req.body);
-  const data = {headers: req.headers, body: req.body}
+  const data = { headers: req.headers, body: req.body };
   io.emit('response', data);
   return res.status(200).json(req.body);
-})
+});
 
 app.get('*', (req, res) => {
   console.log('hellooooo');
@@ -67,7 +66,7 @@ app.get('*', (req, res) => {
 });
 
 // //inital error handler, needs work
-app.use('*', (req,res) => {
+app.use('*', (req, res) => {
   res.status(404).send('Not Found');
 });
 
@@ -78,9 +77,11 @@ app.use((err, req, res, next) => {
     status: 500,
     message: { err: 'An error occurred' },
   };
-  const errObj = {...defaultErr, ...err}
+  const errObj = { ...defaultErr, ...err };
   console.log(errorObj.log);
   return res.status(errorObj.status).json(errorObj.message);
 });
 
-module.exports = server.listen(port, () => console.log(`Listening on port ${port}`));
+module.exports = server.listen(port, () =>
+  console.log(`Listening on port ${port}`)
+);

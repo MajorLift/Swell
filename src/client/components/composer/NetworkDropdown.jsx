@@ -44,7 +44,7 @@ function NetworkDropdown({ onProtocolSelect, network }) {
       networkTitle = 'OpenAPI';
       break;
     case 'webhook':
-      networkTitle = 'Webhook';
+      networkTitle = 'WebHook';
   }
 
   return (
@@ -147,7 +147,7 @@ function NetworkDropdown({ onProtocolSelect, network }) {
             }}
             className="dropdown-item"
           >
-            Webhook
+            WebHook
           </a>
         </div>
       </div>

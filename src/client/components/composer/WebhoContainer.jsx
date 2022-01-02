@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import { io } from 'socket.io-client';
-
-// const socket = io('http://localhost:3000');
+const socket = io('http://localhost:3000');
 
 const WebhookContainer = ({
   resetComposerFields,
@@ -108,45 +107,46 @@ const WebhookContainer = ({
     });
   }, []);
 
-  // const startServerButton = () => {
-  //   if (!serverStatus) {
-  //     updateServerStatus(true);
+  const startServerButton = () => {
+    if (!serverStatus) {
+      updateServerStatus(true);
 
-  //     // turn on ngrok connection/URL
-  //     // request server.js to generate and return a webhook URL
-  //     fetch('http://localhost:3000/webhookServer', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     })
-  //       .then((data) => data.json())
-  //       .then((data) => {
-  //         // set boolean value server status to true
-  //         updateServerStatus(true);
-  //         console.log(`${data}/webhook`);
-  //         // set
-  //         updateURL(`${data}/webhook`);
-  //         console.log('updatedURL', data);
-  //       })
-  //       .catch((err) => console.error(err));
-  //   } else if (serverStatus) {
-  //     // request server to kill webhook url instance
-  //     updateServerStatus(false);
-  //     fetch('http://localhost:3000/webhookServer', {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     })
-  //       .then((data) => data.json())
-  //       .then((url) => {
-  //         // set boolean value server status to false
-  //         console.log(url)
-  //       })
-  //       .catch((err) => console.error(err));
-  //   }
-  // };
+      // turn on ngrok connection/URL
+      // request server.js to generate and return a webhook URL
+      fetch('http://localhost:3000/webhookServer', {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+        mode: 'no-cors',
+      })
+        .then((data) => data.json())
+        .then((data) => {
+          // set boolean value server status to true
+          updateServerStatus(true);
+          console.log(`${data}/webhook`);
+          // set
+          updateURL(`${data}/webhook`);
+          console.log('updatedURL', data);
+        })
+        .catch((err) => console.error(err));
+    } else if (serverStatus) {
+      // request server to kill webhook url instance
+      updateServerStatus(false);
+      fetch('http://localhost:3000/webhookServer', {
+        method: 'DELETE',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      })
+        .then((data) => data.json())
+        .then((url) => {
+          // set boolean value server status to false
+          console.log(url);
+        })
+        .catch((err) => console.error(err));
+    }
+  };
 
   return (
     <div className="mr-2 is-flex is-justify-content-center">
