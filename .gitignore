@@ -9,13 +9,12 @@ release/
 dist/
 node_modules
 *.compiled.*
-package-lock.json
 coverage/
 .vscode
 src/client/docs/
 
 # Folder config file #
-######################
+#####################
 Desktop.ini
 
 # Folder notes #
@@ -59,7 +58,7 @@ ehthumbs.db
 *.lnk
 
 # proto files #
-#####################
+####################
 protos/
 
 # testing #
